@@ -1,3 +1,5 @@
+// Has been added to index.js
+
 // Gets POST request from loginPage to authenicate the input fields from login page
 // If authentication passes, then display the related profiles
 app.post('/loginPage', async (req, res) => {

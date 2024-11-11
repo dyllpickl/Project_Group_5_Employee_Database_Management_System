@@ -33,7 +33,7 @@ app.get('/editProfile', (req, res) => {
 // Checks for the profile type of login information
 // Displays the related profiles
 app.get('/profileView', async (req, res) => {
-    let dbProfiles;
+    let dbProfiles, viewText;
 
     // Obtains all profile_type from profiles table
     const dbProfilesResult = await db.query("SELECT * FROM public.profiles WHERE email=($1)",
@@ -45,12 +45,14 @@ app.get('/profileView', async (req, res) => {
     // Otherwise, obtain only the user's profile
     if (dbProfileType === "AD") {
         dbProfiles = await db.query("SELECT * FROM public.profiles");
+        viewText = "Admin View";
     } else {
         dbProfiles = await db.query("SELECT * FROM public.profiles WHERE email=($1)",
             [loginEmail]
         );
+        viewText = "Employee View";
     }
-    res.render('profileView.ejs', { profiles: dbProfiles.rows })
+    res.render('profileView.ejs', { profiles: dbProfiles.rows, viewText })
 });
 
 // Loads the profile editing page with corresponding profile

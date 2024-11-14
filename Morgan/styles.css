@@ -1,0 +1,25 @@
+.header {
+    border-bottom: 3px solid black;
+    display: flex;
+    justify-content: space-between;
+    position: sticky;
+    z-index: 10;
+    background: grey;
+    top: 0;
+}
+
+.login-form {
+    width: 600px;
+    margin: 0 auto;
+    padding: 0px;
+}
+
+.login-button {
+    background: white;
+    font-size: 16px;
+    border-radius: 5px;
+    border-color: black;
+    color: black;
+    font-weight: 600;
+    cursor: pointer;
+}

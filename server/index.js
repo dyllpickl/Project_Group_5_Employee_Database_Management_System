@@ -1,16 +1,13 @@
 import express from "express";
 import bodyParser from "body-parser";
-import { configDotenv } from "dotenv";
 import pg from "pg";
 
-configDotenv();
-
 const db = new pg.Client({
-  user: process.env.USER,
-  host: process.env.HOST,
-  database: process.env.DATABASE,
-  password: process.env.PASSWORD,
-  port: process.env.PORT,
+  user: "postgres",
+  host: "localhost",
+  database: "finaldb",
+  password: "Mac2479",
+  port: 5432,
 });
 
 const port = 5000;
@@ -21,43 +18,119 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 db.connect();
 
-app.get('/', (req, res) => {
-  res.render("homePage.js");
-});
-
-app.get("/login", (req, res) => {
-  res.render("loginPage.js");
-});
-
-//Adding this temporarily
-app.post("/login", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-      try{
-          const result = await db.query("SELECT * FROM users WHERE username = ($2)", [username,]);
-          if (result.rows.length > 0) {
-              const user = result.rows[0];
-              const storedPassword = user.password;
-
-              if (password === storedPassword) {
-                  res.render("homePage.js");
-              } else {
-                  res.send("Incorrect Password");  
-              }
-          } else {
-              res.send("User not found");
-          }
-      } catch(err) {
-          console.log(err);
-      }
-});
-
 app.listen(port, () => {
   console.log(`The server is running on port ${port}.`);
 });
+
+app.post("/login", async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+  try {
+    const result = await signin(username, password);
+    if (result == "Invalid") {
+      res.json({ responce: "Invalid" });
+    } else {
+      console.log(result);
+      res.json({ responce: result });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.post("/getProfiles", async (req, res) => {
+  const email = req.body.email;
+  const result = await getProfiles(email);
+  res.json({ responce: result});
+});
+
+app.put("/update", (req,res) => {
+  if (editBlog(req.body.id, req.body.title, req.body.body)) {
+    res.json({"code":"working"});
+  } else {
+    res.json({"code":"error"});
+  }
+})
+
+app.delete("/deleteProfile", async (req, res) => {
+  if (deleteProfile(req.body.id)) {
+    res.json({"code":"working"});
+  } else {
+    res.json({"code":"error"});
+  }
+})
 
 process.on("SIGINT", () => {
   db.end();
   console.log("Server closing down & ending DB connection.");
   process.exit();
 });
+
+async function signin(username, password) {
+  try {
+    const result = await db.query(
+      "SELECT email FROM users WHERE username = $1 AND password = $2",
+      [username, password]
+    );
+    if (result.rowCount > 0) {
+      return result.rows[0].email;
+    } else {
+      return "Invalid";
+    }
+  } catch (err) {
+    console.log("ERROR: could not sign in.");
+    return false;
+  }
+}
+
+async function getProfiles(email) {
+  var queryStr
+  if (await isAdmin(email)) {
+    queryStr = "SELECT * FROM profiles";
+  } else {
+    queryStr = `SELECT * FROM profiles WHERE email = ${email}`;
+  }
+  try {
+    const result = await db.query( queryStr );
+    if (result.rowCount > 0) {
+      return result.rows;
+    } else {
+      return [];
+    }
+  } catch (err) {
+    console.log("ERROR: could not sign in.");
+    return false;
+  }
+}
+
+async function isAdmin(email) {
+  try {
+    const result = await db.query(
+      "SELECT profile_type FROM profiles WHERE email = $1",
+      [email]
+    );
+    if (result.rowCount > 0) {
+      return result.rows[0].profile_type === "AD" ? true : false;
+    } else {
+      return False;
+    }
+  } catch (err) {
+    console.log("ERROR: could not sign in.");
+    return false;
+  }
+}
+
+async function deleteProfile(id) {
+  try {
+    const result = await db.query("DELETE FROM profiles WHERE profile_id = $1", [
+      parseInt(id),
+    ]);
+    if (result.rowCount > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("ERROR: data couldn't be added.");
+  }
+}

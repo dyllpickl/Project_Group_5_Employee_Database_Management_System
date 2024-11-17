@@ -1,3 +1,4 @@
+
 .header {
     border-bottom: 3px solid black;
     display: flex;
@@ -8,13 +9,47 @@
     top: 0;
 }
 
-.login-form {
-    width: 600px;
-    margin: 0 auto;
-    padding: 0px;
+.main-home-page{
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    padding-top:10dvh;
+    
+  }
+
+.login-left{
+  position: absolute;
+  left: 0px;
+  width: 50%;
+  height: 75%;
+  border: 2px solid green;
+  padding-top: 10dvh;
 }
 
-.login-button {
+.login-right{
+  position:absolute;
+  right: 0px;
+  width: 50%;
+  height: 75%;
+  border: 2px solid blueviolet;
+  padding-top: 10dvh;
+}
+
+.login-container {
+    width: 250px;
+    margin: 0 auto;
+    padding: 0px;
+  }
+  
+.center{
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    padding-top:3dvh;
+    
+  }
+
+.universal-button {
     background: white;
     font-size: 16px;
     border-radius: 5px;
@@ -23,3 +58,42 @@
     font-weight: 600;
     cursor: pointer;
 }
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+}
+
+input[type="text"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 15px 5px;
+    margin: 10px 0;
+    background: rgb(224, 224, 224);
+    font-weight:bolder;
+    text-align: center;
+    display: inline-block;
+    border: 4px solid #000000;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  input[type="password"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 15px 5px;
+    margin: 10px 0;
+    background: rgb(224, 224, 224);
+    font-weight:bolder;
+    text-align: center;
+    display: inline-block;
+    border: 4px solid #000000;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+
+  

@@ -1,0 +1,88 @@
+body {
+  background-color: rgb(192, 192, 192);
+}
+
+.left{
+  position: absolute;
+  left: 0px;
+  align-content: center;
+  width: 50%;
+  height: 75%;
+  border: 2px solid green;
+  
+  
+}
+
+.right{
+  position:absolute;
+  right: 0px;
+  width: 50%;
+  height: 75%;
+  border: 2px solid blueviolet;
+  
+}
+
+.intro-container {
+    font-weight: bold;
+    text-align: center;
+    width: 250px;
+    margin: 0 auto;
+    padding: 0px;
+  } 
+
+.universal-button {
+    background: white;
+    font-size: 16px;
+    border-radius: 5px;
+    border-color: black;
+    color: black;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+}
+
+input[type="text"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 15px 5px;
+    margin: 10px 0;
+    background: rgb(255, 255, 255);
+    font-weight:bolder;
+    text-align: center;
+    display: inline-block;
+    border: 4px solid #000000;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  input[type="password"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 15px 5px;
+    margin: 10px 0;
+    background: rgb(255, 255, 255);
+    font-weight:bolder;
+    text-align: center;
+    display: inline-block;
+    border: 4px solid #000000;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  .puzzle-img {
+    object-fit: cover;
+    width: 100%;
+    height: 75vh;
+    background: url('../public/puzzle_piece.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  

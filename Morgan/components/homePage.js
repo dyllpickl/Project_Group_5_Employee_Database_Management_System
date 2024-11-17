@@ -11,18 +11,24 @@ function Home () {
     };
   
     return (
-        <div className="main-home-page">
-            <h1>Welcome</h1>
-                <p>Please enter your credentials</p>
-                <div className="center">
-                    <button 
-                    className="universal-button" 
-                    onClick={loginClick}>Login
-                    </button>
-                </div>
-
+    <div>
+        <div className="left">
+            <div className="intro-container">
+                <h1>Welcome</h1>
+                    <p>Please enter your credentials</p>
+                        <div className="button-wrapper">
+                            <button 
+                                className="universal-button" 
+                                onClick={loginClick}>Login
+                            </button>
+                        </div>
+            </div>
         </div>
-    
+
+        <div className="right">
+            <div className="puzzle-img"></div>
+        </div>
+    </div>
 )
 }
 

@@ -24,9 +24,10 @@ function Login() {
 
   return (
     <div>
-        <div className="login-left">
-            <form className="login-container" onSubmit={handleLogin}>
+        <div className="left">
+            <form className="intro-container" onSubmit={handleLogin}>
                 <h1>Welcome</h1>
+                    <p>Please enter your credentials</p>
                 <div> 
                     <input 
                         type="text" 
@@ -40,15 +41,17 @@ function Login() {
                         onChange={handleChange}
                         placeholder="Password" 
                     />
-                        <div className="button-wrapper">
-                            <button type="submit" className="universal-button">Login</button>
-                        </div>
+                    <div className="button-wrapper">
+                        <button type="submit" className="universal-button">Login</button>
+                    </div>
+               
                 </div>
             </form>
         </div>
-            <div className="login-right">
-                <h1 className="center">Picture here</h1>
-            </div>
+
+        <div className="right">
+            <div className="puzzle-img"></div>
+        </div>
     </div>
   )
 }

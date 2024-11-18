@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     ssn INT NOT NULL,
     email VARCHAR(255) NOT NULL,
     phone_number VARCHAR(16) NOT NULL,
-    profile_position VARCHAR(3) NOT NULL,
+    profile_type VARCHAR(3) NOT NULL,
     CONSTRAINT fk_user_email FOREIGN KEY (email) REFERENCES public.users (email) ON DELETE CASCADE
 )
 TABLESPACE pg_default;

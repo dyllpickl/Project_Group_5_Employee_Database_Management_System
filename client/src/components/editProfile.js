@@ -1,41 +1,60 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function EditProfile() {
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const [first_name, setFirst] = useState(queryParams.get("first_name"));
-  const [last_name, setLast] = useState(queryParams.get("last_name"));
-  const [ssn, setSsn] = useState(queryParams.get("ssn"));
-  const [email, setEmail] = useState(queryParams.get("email"));
-  const [phone_number, setNumber] = useState(queryParams.get("phone_number"));
+  const navigate = useNavigate();
+  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+
+  const [first_name, setFirst] = useState("");
+  const [last_name, setLast] = useState("");
+  const [ssn, setSsn] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone_number, setNumber] = useState("");
+
+  const return_email = queryParams.get("current_email");
   const profile_id = queryParams.get("profile_id");
 
-  const handleForm = (event) => {
+  useEffect(() => {
+    setFirst(queryParams.get("first_name") || "");
+    setLast(queryParams.get("last_name") || "");
+    setSsn(queryParams.get("ssn") || "");
+    setEmail(queryParams.get("email") || "");
+    setNumber(queryParams.get("phone_number") || "");
+  }, [queryParams]);
+
+  const handleForm = async (event) => {
     event.preventDefault();
-        let postData = {
-            id:profile_id,
-            first_name:first_name,
-            last_name:last_name,
-            ssn:ssn,
-            email:email,
-            phone_number:phone_number,
-        } 
-        fetch("/update",{
-            method: "put",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify(postData)
-        }).then(response => response.json()).then(data=>{
-            console.log(data);
-        })
+
+    const postData = {
+      id: profile_id,
+      first_name:first_name,
+      last_name:last_name,
+      ssn:ssn,
+      email:email,
+      phone_number:phone_number,
+    };
+
+    try {
+      const response = await fetch("/update", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(postData),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      navigate(`/profile?email=${return_email}`);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
   return (
-    <div class="container">
-      <h1 class="mb-4 mt-4">Edit Profile</h1>
-      <div class="card-body">
+    <div className="container">
+      <h1 className="mb-4 mt-4">Edit Profile</h1>
+      <div className="card-body">
         <form onSubmit={handleForm}>
           <div className="form-group mb-4">
             <label htmlFor="first_name" className="form-label">

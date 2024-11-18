@@ -11,14 +11,15 @@ function UpdateButton(param) {
       email: param.email,
       phone_number: param.phone_number,
       profile_id: param.profile_id,
+      current_email: param.current_email
     }).toString();
-    navigate(`/editProfile?=${queryStr}`);
+    navigate(`/editProfile?${queryStr}`);
   };
   return (
     <div>
       <button
         onClick={updateProfile}
-        class="btn btn-secondary"
+        className="btn btn-secondary"
         style={{ marginRight: "10px" }}
       >
         Update

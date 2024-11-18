@@ -13,6 +13,7 @@ function DeleteButton(param) {
       .then((data) => {
         console.log(data);
       });
+    param.refreshFunc();
   };
 
   return (

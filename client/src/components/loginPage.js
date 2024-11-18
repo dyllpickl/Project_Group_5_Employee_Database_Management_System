@@ -26,7 +26,6 @@ function Login() {
             if (email === "Invalid") {
                 console.log("error");
             } else {
-              
               navigate(`/profile?email=${email}`);
             }
         } catch(error) {

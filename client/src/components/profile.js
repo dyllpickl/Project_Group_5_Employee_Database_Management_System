@@ -21,9 +21,11 @@ function Profile (param) {
                          email={param.email}
                          phone_number={param.phone_number}
                          profile_id={param.profile_id}
+                         current_email={param.current_email}
                          />
                         <DeleteButton 
-                         profile_id = {param.profile_id}/>
+                         profile_id = {param.profile_id}
+                         refreshFunc= {param.refreshFunc} />
                     </div>
             </div>
         </div>

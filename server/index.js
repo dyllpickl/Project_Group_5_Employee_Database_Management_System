@@ -41,24 +41,51 @@ app.post("/login", async (req, res) => {
 app.post("/getProfiles", async (req, res) => {
   const email = req.body.email;
   const result = await getProfiles(email);
-  res.json({ responce: result});
+  res.json({ responce: result });
 });
 
-app.put("/update", (req,res) => {
-  if (editBlog(req.body.id, req.body.title, req.body.body)) {
-    res.json({"code":"working"});
+app.post("/add", async (req, res) => {
+  if (
+    await addProfile(
+      req.body.first_name,
+      req.body.last_name,
+      req.body.ssn,
+      req.body.email,
+      req.body.phone_number,
+      req.body.profile_type
+    )
+  ) {
+    res.json({ code: "working" });
   } else {
-    res.json({"code":"error"});
+    res.json({ code: "error" });
   }
-})
+});
+
+app.put("/update", async (req, res) => {
+  console.log(req.body)
+  if (
+    await editProfile(
+      req.body.first_name,
+      req.body.last_name,
+      req.body.ssn,
+      req.body.email,
+      req.body.phone_number,
+      req.body.id
+    )
+  ) {
+    res.json({ code: "working" });
+  } else {
+    res.json({ code: "error" });
+  }
+});
 
 app.delete("/deleteProfile", async (req, res) => {
-  if (deleteProfile(req.body.id)) {
-    res.json({"code":"working"});
+  if (await deleteProfile(req.body.id)) {
+    res.json({ code: "working" });
   } else {
-    res.json({"code":"error"});
+    res.json({ code: "error" });
   }
-})
+});
 
 process.on("SIGINT", () => {
   db.end();
@@ -84,14 +111,14 @@ async function signin(username, password) {
 }
 
 async function getProfiles(email) {
-  var queryStr
+  var queryStr;
   if (await isAdmin(email)) {
     queryStr = "SELECT * FROM profiles";
   } else {
     queryStr = `SELECT * FROM profiles WHERE email = ${email}`;
   }
   try {
-    const result = await db.query( queryStr );
+    const result = await db.query(queryStr);
     if (result.rowCount > 0) {
       return result.rows;
     } else {
@@ -120,11 +147,45 @@ async function isAdmin(email) {
   }
 }
 
+async function addProfile(first, last, ssn, email, number, type) {
+  try {
+    const result = await db.query(
+      "INSERT INTO profiles (first_name, last_name, ssn, email, phone_number, profile_type) VALUES ($1, $2, $3, $4, $5, $6)",
+      [first, last, ssn, email, number, type]
+    );
+    if (result.rowCount > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("ERROR: data couldn't be added.");
+  }
+}
+
+async function editProfile(first, last, ssn, email, number, id) {
+  try {
+    const result = await db.query(
+      "UPDATE profiles SET first_name = $1, last_name = $2, ssn = $3, email = $4, phone_number = $5 WHERE profile_id = $6",
+      [first, last, parseInt(ssn), email, number, parseInt(id)]
+    );
+    console.log(result)
+    if (result.rowCount > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.log("ERROR: data couldn't be added.");
+  }
+}
+
 async function deleteProfile(id) {
   try {
-    const result = await db.query("DELETE FROM profiles WHERE profile_id = $1", [
-      parseInt(id),
-    ]);
+    const result = await db.query(
+      "DELETE FROM profiles WHERE profile_id = $1",
+      [parseInt(id)]
+    );
     if (result.rowCount > 0) {
       return true;
     } else {

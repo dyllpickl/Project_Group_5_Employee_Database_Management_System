@@ -1,11 +1,10 @@
 import React from "react";
 
-function SortProfiles( param ) {
-
-  async function fetchProfiles( order ) {
+function SortProfiles(param) {
+  async function fetchProfiles(order) {
     const urlQuery = {
-      email:param.email,
-      sortedDisplay:order,
+      email: param.email,
+      sortedDisplay: order,
     };
     try {
       const response = await fetch("/getProfiles", {
@@ -17,10 +16,10 @@ function SortProfiles( param ) {
       });
 
       const result = await response.json();
-      param.updateData(result);
+      param.updateData(result.response);
     } catch (error) {
       console.error("Error fetching profiles:", error);
-    } 
+    }
   }
 
   const setDescending = () => {

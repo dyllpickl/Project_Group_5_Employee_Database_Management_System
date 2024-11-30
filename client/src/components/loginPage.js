@@ -21,8 +21,8 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const responce = await axios.post('/login', credentials); 
-            const email = responce.data.responce;
+            const response = await axios.post('/login', credentials); 
+            const email = response.data.response;
             if (email === "Invalid") {
                 console.log("error");
             } else {

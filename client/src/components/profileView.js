@@ -4,9 +4,11 @@ import Header from "./header";
 import Profile from "./profile";
 import AddProfile from "./addProfile";
 import SortProfiles from "./SortProfiles";
+import SearchBar from "./searchBar";
 
 function ProfileView(param) {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(0);
 
@@ -26,9 +28,11 @@ function ProfileView(param) {
         });
 
         const result = await response.json();
-        setData(result);
+        setData(result.response);
+        setIsAdmin(result.isAdmin || false);
       } catch (error) {
         console.error("Error fetching profiles:", error);
+        setData([]);
       } finally {
         setLoading(false);
       }
@@ -41,7 +45,7 @@ function ProfileView(param) {
     return <p>Loading...</p>;
   }
 
-  if (!data || !data.responce || data.responce.length === 0) {
+  if (!data || data.length === 0) {
     return (
       <div>
         <Header />
@@ -51,25 +55,23 @@ function ProfileView(param) {
   }
 
   const refreshData = () => {
-    setRefresh((prevVal) => prevVal +1);
+    setRefresh((prevVal) => prevVal + 1);
   };
 
   return (
     <div>
       <Header />
-      {data.responce.length > 1 ? (
+      {isAdmin ? (
         <div>
           <h2>Admin View</h2>
-          <AddProfile 
-          refreshFunc ={refreshData}/>
-          <SortProfiles 
-           updateData ={setData}
-           email={email}/>
+          <AddProfile refreshFunc={refreshData} />
+          <SortProfiles updateData={setData} email={email} />
+          <SearchBar updateData={setData} email={email} />
         </div>
       ) : (
         <p>Employee View</p>
       )}
-      {data.responce.map((profile, profileIdentifier) => (
+      {data.map((profile, profileIdentifier) => (
         <Profile
           key={profileIdentifier}
           first_name={profile.first_name}

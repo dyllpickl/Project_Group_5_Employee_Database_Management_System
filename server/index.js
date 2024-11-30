@@ -28,10 +28,9 @@ app.post("/login", async (req, res) => {
   try {
     const result = await signin(username, password);
     if (result == "Invalid") {
-      res.json({ responce: "Invalid" });
+      res.json({ response: "Invalid" });
     } else {
-      console.log(result);
-      res.json({ responce: result });
+      res.json({ response: result });
     }
   } catch (err) {
     console.log(err);
@@ -40,9 +39,15 @@ app.post("/login", async (req, res) => {
 
 app.post("/getProfiles", async (req, res) => {
   const email = req.body.email;
-  const sortedDisplay = req.body.sortedDisplay || NaN; 
-  const result = await getProfiles(email, sortedDisplay); 
-  res.json({ responce: result });
+  const sortedDisplay = req.body.sortedDisplay || NaN;
+  const searchProfile = req.body.searchProfiles || NaN;
+  try {
+    const result = await getProfiles(email, sortedDisplay, searchProfile);
+    const adminStatus = await isAdmin(email);
+    res.json({ response: result, isAdmin: adminStatus });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.post("/add", async (req, res) => {
@@ -63,7 +68,6 @@ app.post("/add", async (req, res) => {
 });
 
 app.put("/update", async (req, res) => {
-  console.log(req.body)
   if (
     await editProfile(
       req.body.first_name,
@@ -111,29 +115,34 @@ async function signin(username, password) {
   }
 }
 
-async function getProfiles(email, sortedDisplay) {
-  var queryStr;
-  if (await isAdmin(email)) {
-    if (sortedDisplay === "ascending") {
-      queryStr = "SELECT * FROM profiles ORDER BY first_name ASC";
-    } else if (sortedDisplay === "descending") {
-      queryStr = "SELECT * FROM profiles ORDER BY first_name DESC";
-    } else {
-      queryStr = "SELECT * FROM profiles";
-    }
-  } else {
-    queryStr = `SELECT * FROM profiles WHERE email = ${email}`;
-  }
+async function getProfiles(email, sortedDisplay, searchProfile) {
+  let queryStr;
+  let queryParams = [];
   try {
-    const result = await db.query(queryStr);
-    if (result.rowCount > 0) {
-      return result.rows;
+    if (await isAdmin(email)) {
+      if (sortedDisplay === "ascending") {
+        queryStr = "SELECT * FROM profiles ORDER BY first_name ASC";
+      } else if (sortedDisplay === "descending") {
+        queryStr = "SELECT * FROM profiles ORDER BY first_name DESC";
+      } else if (!isNaN(searchProfile)) {
+        queryStr = "SELECT * FROM profiles WHERE profile_id = $1";
+        queryParams.push(searchProfile);
+      } else if (searchProfile) {
+        queryStr =
+          "SELECT * FROM profiles WHERE first_name = $1 OR last_name = $1";
+        queryParams.push(searchProfile);
+      } else {
+        queryStr = "SELECT * FROM profiles";
+      }
     } else {
-      return [];
+      queryStr = "SELECT * FROM profiles WHERE email = $1";
+      queryParams.push(email);
     }
+    const result = await db.query(queryStr, queryParams);
+    return result.rowCount > 0 ? result.rows : [];
   } catch (err) {
-    console.log("ERROR: could not sign in.");
-    return false;
+    console.log("Error fetching profiles:", err);
+    return [];
   }
 }
 
@@ -146,7 +155,7 @@ async function isAdmin(email) {
     if (result.rowCount > 0) {
       return result.rows[0].profile_type === "AD" ? true : false;
     } else {
-      return False;
+      return false;
     }
   } catch (err) {
     console.log("ERROR: could not sign in.");
@@ -176,7 +185,7 @@ async function editProfile(first, last, ssn, email, number, id) {
       "UPDATE profiles SET first_name = $1, last_name = $2, ssn = $3, email = $4, phone_number = $5 WHERE profile_id = $6",
       [first, last, parseInt(ssn), email, number, parseInt(id)]
     );
-    console.log(result)
+    console.log(result);
     if (result.rowCount > 0) {
       return true;
     } else {

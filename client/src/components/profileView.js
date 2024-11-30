@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Header from "./header";
 import Profile from "./profile";
 import AddProfile from "./addProfile";
+import SortProfiles from "./SortProfiles";
 
 function ProfileView(param) {
   const [data, setData] = useState(null);
@@ -61,6 +62,9 @@ function ProfileView(param) {
           <h2>Admin View</h2>
           <AddProfile 
           refreshFunc ={refreshData}/>
+          <SortProfiles 
+           updateData ={setData}
+           email={email}/>
         </div>
       ) : (
         <p>Employee View</p>

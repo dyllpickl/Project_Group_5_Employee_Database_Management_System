@@ -40,7 +40,8 @@ app.post("/login", async (req, res) => {
 
 app.post("/getProfiles", async (req, res) => {
   const email = req.body.email;
-  const result = await getProfiles(email);
+  const sortedDisplay = req.body.sortedDisplay || NaN; 
+  const result = await getProfiles(email, sortedDisplay); 
   res.json({ responce: result });
 });
 
@@ -110,10 +111,16 @@ async function signin(username, password) {
   }
 }
 
-async function getProfiles(email) {
+async function getProfiles(email, sortedDisplay) {
   var queryStr;
   if (await isAdmin(email)) {
-    queryStr = "SELECT * FROM profiles";
+    if (sortedDisplay === "ascending") {
+      queryStr = "SELECT * FROM profiles ORDER BY first_name ASC";
+    } else if (sortedDisplay === "descending") {
+      queryStr = "SELECT * FROM profiles ORDER BY first_name DESC";
+    } else {
+      queryStr = "SELECT * FROM profiles";
+    }
   } else {
     queryStr = `SELECT * FROM profiles WHERE email = ${email}`;
   }
